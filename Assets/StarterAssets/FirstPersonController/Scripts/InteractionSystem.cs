@@ -2,12 +2,17 @@ using UnityEngine;
 
 public class InteractionSystem : MonoBehaviour
 {
+    [Header("Node Identity")]
+    [SerializeField] private string nodeId = "Node_01";
+
+    [Header("Visual")]
     [SerializeField] private GameObject activatedVisual;
+   
     private bool activated;
-
     public bool Activated => activated;
+    public string NodeId => nodeId;
 
-    public void Activate()
+    public void Activate(SessionManager session)
     {
         if (activated) return;
         activated = true;
@@ -18,17 +23,10 @@ public class InteractionSystem : MonoBehaviour
         }
 
         Debug.Log($"{name} activated.");
-    }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        if (session != null)
+        {
+            session.RegisterNodeActivation(nodeId);
+        }
     }
 }

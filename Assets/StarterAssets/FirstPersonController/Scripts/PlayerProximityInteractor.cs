@@ -5,7 +5,12 @@ public class PlayerProximityInteractor : MonoBehaviour
     [SerializeField] private InputActionReference interactAction;
 
     private InteractionSystem currentNode;
+    private SessionManager session;
 
+    private void Awake()
+    {
+        session = FindObjectOfType<SessionManager>();
+    }
     private void OnEnable()
     {
         if (interactAction == null) return;
@@ -26,7 +31,7 @@ public class PlayerProximityInteractor : MonoBehaviour
         if (currentNode == null) return;
 
         Debug.Log("Interact pressed (in range)");
-        currentNode.Activate();
+        currentNode.Activate(session);
         currentNode = null;
     }
 
