@@ -7,7 +7,10 @@ public class InteractionSystem : MonoBehaviour
 
     [Header("Visual")]
     [SerializeField] private GameObject activatedVisual;
-   
+
+    [SerializeField] private string storyText;
+    [SerializeField] private StoryTextController textController;
+
     private bool activated;
     public bool Activated => activated;
     public string NodeId => nodeId;
@@ -27,6 +30,11 @@ public class InteractionSystem : MonoBehaviour
         if (session != null)
         {
             session.RegisterNodeActivation(nodeId);
+        }
+
+        if (!string.IsNullOrEmpty(storyText) && textController != null)
+        {
+            textController.ShowText(storyText);
         }
     }
 }
