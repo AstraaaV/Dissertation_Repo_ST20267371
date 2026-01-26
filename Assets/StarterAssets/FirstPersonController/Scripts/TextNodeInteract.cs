@@ -36,6 +36,8 @@ public class TextNodeInteract : MonoBehaviour
 
         if (isPlayerInRange && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
+            if (nodeUI != null && nodeUI.IsOpen) return;
+
             nodeUI.Open(nodeText);
 
             hasBeenUsed = true;
@@ -73,5 +75,10 @@ public class TextNodeInteract : MonoBehaviour
         if(promptTypewriter != null) promptTypewriter.StopTyping();
 
         if (promptObj != null) promptObj.SetActive(false);
+
+        if(nodeUI != null && nodeUI.IsOpen)
+        {
+            nodeUI.Close();
+        }
     }
 }

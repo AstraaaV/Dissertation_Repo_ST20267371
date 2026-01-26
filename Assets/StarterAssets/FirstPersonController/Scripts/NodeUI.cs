@@ -14,6 +14,11 @@ public class NodeUI : MonoBehaviour
         Close();
     }
 
+    private void LateUpdate()
+    {
+        
+    }
+
     // Update is called once per frame
     void Update()
     {
