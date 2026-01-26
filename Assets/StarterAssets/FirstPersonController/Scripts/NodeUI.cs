@@ -14,15 +14,21 @@ public class NodeUI : MonoBehaviour
         Close();
     }
 
-    private void LateUpdate()
+    private void Start()
     {
-        
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isOpen) return;
+        if (!isOpen)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            return;
+        }
 
         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
@@ -35,12 +41,18 @@ public class NodeUI : MonoBehaviour
         panel.SetActive(true);
         isOpen = true;
         typewriter.Type(text);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     public void Close()
     {
         panel.SetActive(false);
         isOpen = false;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     public bool IsOpen => isOpen;

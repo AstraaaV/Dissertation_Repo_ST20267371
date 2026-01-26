@@ -19,7 +19,9 @@ public class TextNodeInteract : MonoBehaviour
     [SerializeField] private string promptMessage = "Press 'E' to interact";
 
     private bool isPlayerInRange;
-    private bool hasBeenUsed;
+    private bool hasBeenRead;
+    private float nextAllowedPressTime = 0f;
+    [SerializeField] private float pressCooldown = 0.15f;
 
     private void Awake()
     {
@@ -32,51 +34,56 @@ public class TextNodeInteract : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (hasBeenUsed) return;
+        if(!isPlayerInRange) return;
+        if (Keyboard.current == null) return;
+        if (!Keyboard.current.eKey.wasPressedThisFrame) return;
+        if (Time.time < nextAllowedPressTime) return;
 
-        if (isPlayerInRange && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        nextAllowedPressTime = Time.time + pressCooldown;
+
+        if (nodeUI == null) return;
+
+        if (nodeUI.IsOpen)
         {
-            if (nodeUI != null && nodeUI.IsOpen) return;
+            nodeUI.Close();
 
-            nodeUI.Open(nodeText);
+            if(!hasBeenRead)
+            {
+                if(promptObj != null) promptObj.SetActive(true);
+                if (promptTypewriter != null) promptTypewriter.Type(promptMessage);
+            }
 
-            hasBeenUsed = true;
-
-            if (promptObj != null) promptObj.SetActive(false);
-
-            if (particleToHide != null) particleToHide.SetActive(false);
-
-            if (triggerCollider != null) triggerCollider.enabled = false;
+            return;
         }
+
+        nodeUI.Open(nodeText);
+        hasBeenRead = true;
+
+        if(promptObj != null) promptObj.SetActive(false);
+        if(particleToHide != null) particleToHide.SetActive(false);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (hasBeenUsed) return;
         if (!other.CompareTag("Player")) return;
 
         isPlayerInRange = true;
 
-        if (promptObj != null) promptObj.SetActive(true);
+        if(nodeUI != null && nodeUI.IsOpen) return;
 
-        if (promptTypewriter != null)
-        {
-            promptTypewriter.Type(promptMessage);
-        }
+        if(promptObj != null) promptObj.SetActive(true);
+        if (promptTypewriter != null) promptTypewriter.Type(promptMessage);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (hasBeenUsed) return;
         if (!other.CompareTag("Player")) return;
-
         isPlayerInRange = false;
 
-        if(promptTypewriter != null) promptTypewriter.StopTyping();
-
+        if (promptTypewriter != null) promptTypewriter.StopTyping();
         if (promptObj != null) promptObj.SetActive(false);
 
-        if(nodeUI != null && nodeUI.IsOpen)
+        if (nodeUI != null && nodeUI.IsOpen)
         {
             nodeUI.Close();
         }
